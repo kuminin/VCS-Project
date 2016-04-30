@@ -42,8 +42,7 @@ def copy_tree():
     FILES_TO_IGNORE = '.DS_Store'
 
     # Copies the project tree to the repo343 directory.
-    shutil.copy(argv[0], g_NAME_OF_REPO)
-    #shutil.copytree(argv[0], g_NAME_OF_REPO, ignore = shutil.ignore_patterns(FILES_TO_IGNORE))
+    shutil.copytree(argv[0], g_NAME_OF_REPO + "/" + argv[0].split("/")[-1], ignore = shutil.ignore_patterns(FILES_TO_IGNORE))
 
 # Walk through the initial repo343 directory.
 # Globals: parameter use for g_NAME_OF_REPO and g_NAME_OF_MANIFEST_FOLDER
@@ -91,12 +90,12 @@ def create_manifest(directory_list):
     # Write parent manifest file to current manifest file.
     manifest_file.write("\nParent file: null")
 
-    
+
     # Copy manifest file to the Project Tree Folder
     src = ""
     for x in range (len(argv[0].split("/")) - 1):
         src += argv[0].split("/")[x] + "/"
-    
+
     shutil.copy(MANIFEST, src + manifest_name)
 
     # Close manifest file.
