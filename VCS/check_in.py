@@ -22,8 +22,8 @@ g_DIRECTORY_AND_FILES_TO_IGNORE = set([".DS_Store"])
 def check_in():
     """Checks in the given current working directory."""
     a_file_path = walk_directory() # Calls walk_directory function to get the map of file paths.
-    print a_file_path
-   # copy_files(a_file_path) # Calls copy_files function
+
+    copy_files(a_file_path) # Calls copy_files function
 
     #create_manifest(a_file_path) # Calls create_manifest function
 
@@ -64,7 +64,7 @@ def copy_files(a_file_path):
         for file in a_file_path[files]:
 
             # Path of project tree inside the repo.
-            directoryPath = g_NAME_OF_REPO + "/" + file
+            directoryPath = g_NAME_OF_REPO + "/" + argv[0].split("/")[-1] + "/" + file
 
             # The check sum name of the given.
             checkSumName = check_sum(files + "/" + file)
