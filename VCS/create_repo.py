@@ -1,10 +1,10 @@
 import os
 import shutil
-import sys
+from sys import argv
 from datetime import datetime
 
-g_NAME_OF_REPO = sys.argv[1] + "/repo343" # Repo Directory Path.
-g_NAME_OF_MANIFEST_FOLDER = sys.argv[1] + "/repo343/MANIFEST" # Manifest Directory Path.
+g_NAME_OF_REPO = argv[1] + "/repo343" # Repo Directory Path.
+g_NAME_OF_MANIFEST_FOLDER = argv[1] + "/repo343/MANIFEST" # Manifest Directory Path.
 
 
 # Creates a repo343 that stores all the files for the project tree.
@@ -42,7 +42,7 @@ def copy_tree():
     FILES_TO_IGNORE = '.DS_Store'
 
     # Copies the project tree to the repo343 directory.
-    shutil.copytree(sys.argv[0], g_NAME_OF_REPO, ignore = shutil.ignore_patterns(FILES_TO_IGNORE))
+    shutil.copytree(argv[0], g_NAME_OF_REPO, ignore = shutil.ignore_patterns(FILES_TO_IGNORE))
 
 # Walk through the initial repo343 directory.
 # Globals: parameter use for g_NAME_OF_REPO and g_NAME_OF_MANIFEST_FOLDER
@@ -92,7 +92,7 @@ def create_manifest(directory_list):
 
 
     # Copy manifest file to the Project Tree Folder
-    shutil.copy(MANIFEST, sys.argv[0] + "/" + manifest_name)
+    shutil.copy(MANIFEST, argv[0] + "/" + manifest_name)
 
     # Close manifest file.
     manifest_file.close()
