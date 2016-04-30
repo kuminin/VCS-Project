@@ -1,19 +1,17 @@
 from create_repo import check_sum
 from datetime import datetime
+from sys import argv
 import create_repo
 import os, shutil
 
 # Current Working Directory Path.
-g_NAME_OF_CURRENT_DIRECTORY = os.getcwd()
+g_NAME_OF_CURRENT_DIRECTORY = argv[0]
 
 # Repo Directory Path.
-g_NAME_OF_REPO = g_NAME_OF_CURRENT_DIRECTORY + "/repo343"
+g_NAME_OF_REPO = argv[1] + "/repo343"
 
 # Manifest Directory Path.
-g_NAME_OF_MANIFEST_FOLDER = g_NAME_OF_CURRENT_DIRECTORY + "/repo343/MANIFEST"
-
-# A set of files and directories to ignore.
-g_DIRECTORY_AND_FILES_TO_IGNORE = set([".git", "repo343", "VCS", "README.md", ".gitignore", "main.py", ".DS_Store"])
+g_NAME_OF_MANIFEST_FOLDER = argv[1] + "/repo343/MANIFEST"
 
 # Checks in the given current working directory.
 # Globals: None.
@@ -21,10 +19,10 @@ g_DIRECTORY_AND_FILES_TO_IGNORE = set([".git", "repo343", "VCS", "README.md", ".
 def check_in():
     """Checks in the given current working directory."""
     a_file_path = walk_directory() # Calls walk_directory function to get the map of file paths.
+    print a_file_path
+    #copy_files(a_file_path) # Calls copy_files function
 
-    copy_files(a_file_path) # Calls copy_files function
-
-    create_manifest(a_file_path) # Calls create_manifest function
+    #create_manifest(a_file_path) # Calls create_manifest function
 
 # Walks through the current working diretory.
 # Globals: g_NAME_OF_CURRENT_DIRECTORY use for walking project tree.
@@ -36,12 +34,6 @@ def walk_directory():
 
     # Walk in the given current directory.
     for (a_dir_path, a_dir_name, a_file_names) in os.walk(g_NAME_OF_CURRENT_DIRECTORY, topdown = True):
-
-        # get rid of directories that are in the ignore set.
-        a_dir_name[:] = [d for d in a_dir_name if d not in g_DIRECTORY_AND_FILES_TO_IGNORE]
-
-        # get rid of files that are in the ignore set.
-        a_file_names[:] = [f for f in a_file_names if f not in g_DIRECTORY_AND_FILES_TO_IGNORE]
 
         a_list_of_files = [] # List to store path of files.
 
