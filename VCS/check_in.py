@@ -13,6 +13,9 @@ g_NAME_OF_REPO = argv[1] + "/repo343"
 # Manifest Directory Path.
 g_NAME_OF_MANIFEST_FOLDER = argv[1] + "/repo343/MANIFEST"
 
+# A set of files and directories to ignore.
+g_DIRECTORY_AND_FILES_TO_IGNORE = set([".DS_Store"])
+
 # Checks in the given current working directory.
 # Globals: None.
 # A line count = 3
@@ -20,7 +23,7 @@ def check_in():
     """Checks in the given current working directory."""
     a_file_path = walk_directory() # Calls walk_directory function to get the map of file paths.
     print a_file_path
-    #copy_files(a_file_path) # Calls copy_files function
+   # copy_files(a_file_path) # Calls copy_files function
 
     #create_manifest(a_file_path) # Calls create_manifest function
 
@@ -34,6 +37,9 @@ def walk_directory():
 
     # Walk in the given current directory.
     for (a_dir_path, a_dir_name, a_file_names) in os.walk(g_NAME_OF_CURRENT_DIRECTORY, topdown = True):
+
+        # get rid of directories that are in the ignore set.
+        a_dir_name[:] = [d for d in a_dir_name if d not in g_DIRECTORY_AND_FILES_TO_IGNORE]
 
         a_list_of_files = [] # List to store path of files.
 
