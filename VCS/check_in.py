@@ -41,6 +41,8 @@ def walk_directory():
         # get rid of directories that are in the ignore set.
         a_dir_name[:] = [d for d in a_dir_name if d not in g_DIRECTORY_AND_FILES_TO_IGNORE]
 
+        a_file_names[:] = [d for d in a_file_names if d not in g_DIRECTORY_AND_FILES_TO_IGNORE]
+
         a_list_of_files = [] # List to store path of files.
 
         for file_name in a_file_names:
