@@ -75,8 +75,11 @@ def walk_tree():
 def create_manifest(directory_list):
     """Creates the manifest file for the repo343 directory."""
 
+    # Manifest File Name
+    manifest_name = str(datetime.now())
+
     # Sets the file name of MANIFEST to the current datetime.
-    MANIFEST = g_NAME_OF_MANIFEST_FOLDER + "/" + str(datetime.now())
+    MANIFEST = g_NAME_OF_MANIFEST_FOLDER + "/" + manifest_name
 
     # Create and open manifest file.
     manifest_file = open(MANIFEST, 'w+')
@@ -86,6 +89,10 @@ def create_manifest(directory_list):
 
     # Write parent manifest file to current manifest file.
     manifest_file.write("\nParent file: null")
+
+
+    # Copy manifest file to the Project Tree Folder
+    shutil.copy(MANIFEST, sys.argv[0] + "/" + manifest_name)
 
     # Close manifest file.
     manifest_file.close()
@@ -128,7 +135,7 @@ def write_file(manifest_file, directory_list):
     for directory in directory_list:
 
         # Write the directory path in file except for the mainfest file.
-        if not (directory == g_NAME_OF_MANIFEST_FOLDER):
+        if directory != g_NAME_OF_MANIFEST_FOLDER and directory != g_NAME_OF_REPO:
             manifest_file.write("\t" + directory + "\n")
 
             # loop through the file in the list of files
