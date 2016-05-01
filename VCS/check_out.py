@@ -4,13 +4,12 @@ import create_repo
 import os, shutil
 
 # Current Working Directory Path.
-g_NAME_OF_CURRENT_DIRECTORY = os.getcwd()
-
+g_NAME_OF_CURRENT_DIRECTORY = argv[0]
 # Repo Directory Path.
-g_NAME_OF_REPO = g_NAME_OF_CURRENT_DIRECTORY + "/repo343"
+g_NAME_OF_REPO = argv[1] + "/repo343"
 
 # Manifest Directory Path.
-g_NAME_OF_MANIFEST_FOLDER = g_NAME_OF_CURRENT_DIRECTORY + "/repo343/MANIFEST"
+g_NAME_OF_MANIFEST_FOLDER = argv[1] + "/repo343/MANIFEST"
 
 # A set of files and directories to ignore.
 g_DIRECTORY_AND_FILES_TO_IGNORE = set([".git", "repo343", "VCS", "README.md", ".gitignore", "main.py", ".DS_Store"])
