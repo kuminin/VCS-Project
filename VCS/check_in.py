@@ -25,7 +25,7 @@ def check_in():
 
     copy_files(a_file_path) # Calls copy_files function
 
-    #create_manifest(a_file_path) # Calls create_manifest function
+    create_manifest(a_file_path) # Calls create_manifest function
 
 # Walks through the current working diretory.
 # Globals: g_NAME_OF_CURRENT_DIRECTORY use for walking project tree.
@@ -61,10 +61,16 @@ def copy_files(a_file_path):
 
     # loop for getting all the files in a map of lists.
     for files in a_file_path:
+        print files, a_file_path[files]
         for file in a_file_path[files]:
 
             # Path of project tree inside the repo.
-            directoryPath = g_NAME_OF_REPO + "/" + argv[0].split("/")[-1] + "/" + file
+            directoryPath = g_NAME_OF_REPO + "/" + argv[0].split("/")[-1]
+
+            for x in range(len(files.split("/"))-1, files.split("/").index(argv[0].split("/")[-1]), -1):
+                    directoryPath += "/" + files.split("/")[x]
+
+            directoryPath = directoryPath + "/" + file
 
             # The check sum name of the given.
             checkSumName = check_sum(files + "/" + file)
@@ -88,15 +94,26 @@ def write_parent(manifest_file):
     """Writes the parent manifest file to the current manifest file."""
     a_manifest_file = [] # Array to keep track of manifest file names
 
+    # Copy manifest file to the Project Tree Folder
+    src = ""
+    for x in range (len(argv[0].split("/")) - 1):
+        src += argv[0].split("/")[x] + "/"
+
+    print src
     # loop through the MANIFEST directory.
-    for (a_dir_path, a_dir_name, a_file_names) in os.walk(g_NAME_OF_MANIFEST_FOLDER):
-
-        a_manifest_file = a_file_names # set the a_manifest_file array to a_file_names
-
-    a_manifest_file.sort() # Sort the given file names in ascending order.
+    for (a_dir_path, a_dir_name, a_file_names) in os.walk(src):
+        # set the a_manifest_file array to a_file_names
+        for file in a_file_names:
+            a_manifest_file.append(file)
+    # for i in range(len(a_manifest_file)):
+    #     print a_manifest_file[i]
+    a_manifest_file = [a for a in a_manifest_file if "MANIFEST_" in a]
 
     # The latest manifest will be written as the parent.
-    manifest_file.write("\nParent file: " + str(a_manifest_file[-2]))
+    manifest_file.write("\nParent file: " + a_manifest_file[0])
+
+    # Remove old manifest file in the Projet Tree
+    os.remove(src + a_manifest_file[0])
 
 # Creates the manifest file for the repo343 directory.
 # Globals: g_NAME_OF_MANIFEST_FOLDER use for file path.
@@ -104,8 +121,11 @@ def write_parent(manifest_file):
 def create_manifest(directory_list):
     """Creates the manifest file for the repo343 directory."""
 
+    # Manifest File Name
+    manifest_name = "MANIFEST_" + str(datetime.now()) + ".txt"
+
     # Sets the file name of MANIFEST to the current datetime.
-    MANIFEST = g_NAME_OF_MANIFEST_FOLDER + "/" + str(datetime.now())
+    MANIFEST = g_NAME_OF_MANIFEST_FOLDER + "/" + manifest_name
 
     # Create and open manifest file.
     manifest_file = open(MANIFEST, 'w+')
@@ -118,6 +138,14 @@ def create_manifest(directory_list):
 
     # Close manifest file.
     manifest_file.close()
+
+    # Copy manifest file to the Project Tree Folder
+    src = ""
+    for x in range (len(argv[0].split("/")) - 1):
+        src += argv[0].split("/")[x] + "/"
+
+    shutil.copyfile(MANIFEST, src + manifest_name)
+
 
 # Write the project tree to the manifest file.
 # Globals: None.
@@ -153,21 +181,21 @@ def write_file(manifest_file, directory_list):
 
     manifest_file.write("Project Tree Structure: \n") # Write string to file
 
-    # Write the name of the repo to show project tree
-    manifest_file.write("\t" + g_NAME_OF_REPO + "\n")
-
-    # loops through the directory in the directoy_list
+    # loop through the directory in the list of directories
     for directory in directory_list:
 
-        # loops through the file name contained in directory_list[directory]
-        for file in directory_list[directory]:
+        # Write the directory path in file except for the mainfest file.
+        if directory != g_NAME_OF_MANIFEST_FOLDER and directory != g_NAME_OF_REPO:
+            manifest_file.write("\t" + directory + "\n")
 
-            # Writes the path name to the file
-            manifest_file.write("\t\t" + g_NAME_OF_REPO + "/" + file + "/" + check_sum(directory + "/" + file)+ "\n")
+            # loop through the file in the list of files
+            for files in directory_list[directory]:
 
-            # Append path for files to listing
-            a_file_listing.append(g_NAME_OF_REPO + "/" + file + "/" + check_sum(directory + "/" + file))
+                # Append path for files to listing
+                a_file_listing.append(directory + "/" + files)
 
+                # write the path for the file and its checksum
+                manifest_file.write("\t\t" + directory + "/" + files + "/" + check_sum(directory + "/" + files) + "\n")
     return a_file_listing # return list of file paths.
 
 # Check if the script is ran independently.

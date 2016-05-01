@@ -76,7 +76,7 @@ def create_manifest(directory_list):
     """Creates the manifest file for the repo343 directory."""
 
     # Manifest File Name
-    manifest_name = str(datetime.now())
+    manifest_name = "MANIFEST_" + str(datetime.now()) + ".txt"
 
     # Sets the file name of MANIFEST to the current datetime.
     MANIFEST = g_NAME_OF_MANIFEST_FOLDER + "/" + manifest_name
@@ -90,16 +90,15 @@ def create_manifest(directory_list):
     # Write parent manifest file to current manifest file.
     manifest_file.write("\nParent file: null")
 
+    # Close manifest file.
+    manifest_file.close()
 
     # Copy manifest file to the Project Tree Folder
     src = ""
     for x in range (len(argv[0].split("/")) - 1):
         src += argv[0].split("/")[x] + "/"
 
-    shutil.copy(MANIFEST, src + manifest_name)
-
-    # Close manifest file.
-    manifest_file.close()
+    shutil.copyfile(MANIFEST, src + manifest_name)
 
 # Write the project tree to the manifest file.
 # Globals: None.
