@@ -39,7 +39,7 @@ def copy_tree():
     """Copies the project tree where backend.py is located."""
 
     # All the files to ignore when copying the Project Tree.
-    FILES_TO_IGNORE = ('.*', 'tmp*')
+    FILES_TO_IGNORE = '.DS_Store'
 
     # Copies the project tree to the repo343 directory.
     shutil.copytree(argv[0], g_NAME_OF_REPO + "/" + argv[0].split("/")[-1], ignore = shutil.ignore_patterns(FILES_TO_IGNORE))
@@ -135,7 +135,7 @@ def write_file(manifest_file, directory_list):
 
         # Write the directory path in file except for the mainfest file.
         if directory != g_NAME_OF_MANIFEST_FOLDER and directory != g_NAME_OF_REPO:
-            manifest_file.write("\t" + directory + "\n")
+            # manifest_file.write("\t" + directory + "\n")
 
             # loop through the file in the list of files
             for files in directory_list[directory]:
@@ -144,7 +144,7 @@ def write_file(manifest_file, directory_list):
                 a_file_listing.append(directory + "/" + files)
 
                 # write the path for the file and its checksum
-                manifest_file.write("\t\t" + directory + "/" + files + "/" + check_sum(directory + "/" + files) + "\n")
+                manifest_file.write("\t" + directory + "/" + files + "/" + check_sum(directory + "/" + files) + "\n")
     return a_file_listing # return list of file paths.
 
 

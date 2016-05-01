@@ -16,7 +16,7 @@ g_NAME_OF_REPO = argv[1] + "/repo343"
 g_NAME_OF_MANIFEST_FOLDER = argv[1] + "/repo343/MANIFEST"
 
 # A set of files and directories to ignore.
-g_DIRECTORY_AND_FILES_TO_IGNORE = set([".*", "tmp*", "repo343"])
+g_DIRECTORY_AND_FILES_TO_IGNORE = set(['.DS_Store', "repo343"])
 
 # Checks in the given current working directory.
 # Globals: None.
