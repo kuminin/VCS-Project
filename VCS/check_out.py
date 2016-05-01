@@ -23,7 +23,7 @@ def check_out():
 
     a_manifest_files = get_manifest() # Gets the list of mainfest files.
 
-    remove_files(); # removes the files in our current working directory
+    #remove_files(); # removes the files in our current working directory
 
     user_input = type_input(a_manifest_files) # Gets user input.
 
@@ -40,6 +40,8 @@ def copy_files(a_manifest_files, user_input):
     """Copies the files into the current working directory."""
     a_file_lines = [] # list to store all the lines in manifest file.
 
+	shutil.copy(g_NAME_OF_MANIFEST_FOLDER + "/" + a_manifest_files[user_input-1], g_NAME_OF_CURRENT_DIRECTORY)
+
     # open manifest file as read only.
     manifest_file = open(g_NAME_OF_MANIFEST_FOLDER + "/" + a_manifest_files[user_input-1], "r")
 
@@ -49,10 +51,24 @@ def copy_files(a_manifest_files, user_input):
 
     manifest_file.close() # close the manifes file
 
-    # copies the files from the project leaf tree into the current working directory.
-    for i in range(2,len(a_file_lines)-3):
-        file_name = os.getcwd() + "/" + a_file_lines[i].split("/")[-2]
-        shutil.copyfile(a_file_lines[i], file_name)
+    print a_file_lines
+
+    # copies the files from the project leaf tree into our target destination.
+    for i in range(1,len(a_file_lines)-3):
+		a_file_path = a_file_lines[i].split("/")
+		project_tree_name = a_file_path[a_file_path.index("repo343") + 1]
+		project_tree_path = g_NAME_OF_CURRENT_DIRECTORY + "/" + project_tree_name
+		if not os.path.exists(project_tree_path):
+	    	os.makedirs(project_tree_path)
+	
+		if (len(a_file_path) - 1) - a_file_path.index(project_tree_name) > 2:
+			sub_folder_directory = project_tree_path + "/" + a_file_path[a_file_path.index(project_tree_name) + 1]
+			if not os.path.exists(sub_folder_directory):
+				os.makedirs(sub_folder_directory)
+			shutil.copy("/".join(a_file_path), sub_folder_directory + "/" + a_file_path[-2])
+		else:
+			shutil.copy("/".join(a_file_path), project_tree_path + "/" + a_file_path[-2])
+		
 
 # Ask user for the Manifest they'd like to check_out.
 # Globals: None.
