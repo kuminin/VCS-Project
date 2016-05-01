@@ -23,8 +23,6 @@ def check_out():
 
     a_manifest_files = get_manifest() # Gets the list of mainfest files.
 
-    #remove_files(); # removes the files in our current working directory
-
     user_input = type_input(a_manifest_files) # Gets user input.
 
     # Checks for user input
@@ -40,7 +38,9 @@ def copy_files(a_manifest_files, user_input):
     """Copies the files into the current working directory."""
     a_file_lines = [] # list to store all the lines in manifest file.
 
-	shutil.copy(g_NAME_OF_MANIFEST_FOLDER + "/" + a_manifest_files[user_input-1], g_NAME_OF_CURRENT_DIRECTORY)
+    manifest_file_path = g_NAME_OF_MANIFEST_FOLDER + "/" + a_manifest_files[user_input - 1]
+
+    shutil.copy(manifest_file_path, g_NAME_OF_CURRENT_DIRECTORY)
 
     # open manifest file as read only.
     manifest_file = open(g_NAME_OF_MANIFEST_FOLDER + "/" + a_manifest_files[user_input-1], "r")
@@ -54,21 +54,20 @@ def copy_files(a_manifest_files, user_input):
     print a_file_lines
 
     # copies the files from the project leaf tree into our target destination.
-    for i in range(1,len(a_file_lines)-3):
-		a_file_path = a_file_lines[i].split("/")
-		project_tree_name = a_file_path[a_file_path.index("repo343") + 1]
-		project_tree_path = g_NAME_OF_CURRENT_DIRECTORY + "/" + project_tree_name
-		if not os.path.exists(project_tree_path):
-	    	os.makedirs(project_tree_path)
-	
-		if (len(a_file_path) - 1) - a_file_path.index(project_tree_name) > 2:
-			sub_folder_directory = project_tree_path + "/" + a_file_path[a_file_path.index(project_tree_name) + 1]
-			if not os.path.exists(sub_folder_directory):
-				os.makedirs(sub_folder_directory)
-			shutil.copy("/".join(a_file_path), sub_folder_directory + "/" + a_file_path[-2])
-		else:
-			shutil.copy("/".join(a_file_path), project_tree_path + "/" + a_file_path[-2])
-		
+    for i in range(1,len(a_file_lines) - 3):
+        a_file_path = a_file_lines[i].split("/")
+        project_tree_name = a_file_path[a_file_path.index("repo343") + 1]
+        project_tree_path = g_NAME_OF_CURRENT_DIRECTORY + "/" + project_tree_name
+        if not os.path.exists(project_tree_path):
+            os.makedirs(project_tree_path)
+        if (len(a_file_path) - 1) - a_file_path.index(project_tree_name) > 2:
+            sub_folder_directory = project_tree_path + "/" + a_file_path[a_file_path.index(project_tree_name) + 1]
+            if not os.path.exists(sub_folder_directory):
+                os.makedirs(sub_folder_directory)
+            shutil.copy("/".join(a_file_path), sub_folder_directory + "/" + a_file_path[-2])
+        else:
+            shutil.copy("/".join(a_file_path), project_tree_path + "/" + a_file_path[-2])
+
 
 # Ask user for the Manifest they'd like to check_out.
 # Globals: None.
@@ -109,28 +108,6 @@ def get_manifest():
     a_manifest_files.sort() # Sort the list of file names.
 
     return a_manifest_files # return the list of file names.
-
-# Removes the files in our current working directory
-# Globals: g_NAME_OF_CURRENT_DIRECTORY use for walking project tree.
-# Globals: g_DIRECTORY_AND_FILES_TO_IGNORE use for ignoring directory and files.
-# A line count = 5
-def remove_files():
-    """Removes the files in our current working directory."""
-
-    # Walk in the given current directory.
-    for (a_dir_path, a_dir_name, a_file_names) in os.walk(g_NAME_OF_CURRENT_DIRECTORY, topdown = True):
-
-        # get rid of directories that are in the ignore set.
-        a_dir_name[:] = [d for d in a_dir_name if d not in g_DIRECTORY_AND_FILES_TO_IGNORE]
-
-        # get rid of files that are in the ignore set.
-        a_file_names[:] = [f for f in a_file_names if f not in g_DIRECTORY_AND_FILES_TO_IGNORE]
-
-        # loop through the file_name in file_names.
-        for file_name in a_file_names:
-
-            # remove file in our current working directory.
-            os.remove(a_dir_path + "/" + file_name)
 
 # Check if the script is ran independently.
 if __name__ == "__main__":
