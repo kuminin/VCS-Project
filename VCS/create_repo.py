@@ -39,7 +39,7 @@ def copy_tree():
     """Copies the project tree where backend.py is located."""
 
     # All the files to ignore when copying the Project Tree.
-    FILES_TO_IGNORE = '.DS_Store'
+    FILES_TO_IGNORE = '.*'
 
     # Copies the project tree to the repo343 directory.
     shutil.copytree(argv[0], g_NAME_OF_REPO + "/" + argv[0].split("/")[-1], ignore = shutil.ignore_patterns(FILES_TO_IGNORE))

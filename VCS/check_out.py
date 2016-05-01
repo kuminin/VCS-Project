@@ -13,7 +13,7 @@ g_NAME_OF_REPO = argv[0] + "/repo343"
 g_NAME_OF_MANIFEST_FOLDER = argv[0] + "/repo343/MANIFEST"
 
 # A set of files and directories to ignore.
-g_DIRECTORY_AND_FILES_TO_IGNORE = set([".git", "repo343", "VCS", "README.md", ".gitignore", "main.py", ".DS_Store"])
+g_DIRECTORY_AND_FILES_TO_IGNORE = set(["repo343", ".DS_Store"])
 
 # Checks out a given project manifest based on user input.
 # Globals: None.
@@ -87,8 +87,8 @@ def get_manifest():
 
     # walk through the manifest folder directory
     for (a_dir_path, a_dir_name, a_file_names) in os.walk(g_NAME_OF_MANIFEST_FOLDER):
-
-            a_manifest_files = a_file_names # Set the file names in the manifest folder directory to the a_manifest_files
+            # Set the file names in the manifest folder directory to the a_manifest_files
+            a_manifest_files = a_file_names
 
     a_manifest_files.sort() # Sort the list of file names.
 
