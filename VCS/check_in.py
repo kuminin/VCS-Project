@@ -1,19 +1,22 @@
 from create_repo import check_sum
+from create_repo import get_directory
+from create_repo import write_hierarchy
 from datetime import datetime
+from sys import argv
 import create_repo
 import os, shutil
 
 # Current Working Directory Path.
-g_NAME_OF_CURRENT_DIRECTORY = os.getcwd()
+g_NAME_OF_CURRENT_DIRECTORY = argv[0]
 
 # Repo Directory Path.
-g_NAME_OF_REPO = g_NAME_OF_CURRENT_DIRECTORY + "/repo343"
+g_NAME_OF_REPO = argv[1] + "/repo343"
 
 # Manifest Directory Path.
-g_NAME_OF_MANIFEST_FOLDER = g_NAME_OF_CURRENT_DIRECTORY + "/repo343/MANIFEST"
+g_NAME_OF_MANIFEST_FOLDER = argv[1] + "/repo343/MANIFEST"
 
 # A set of files and directories to ignore.
-g_DIRECTORY_AND_FILES_TO_IGNORE = set([".git", "repo343", "VCS", "README.md", ".gitignore", "main.py", ".DS_Store"])
+g_DIRECTORY_AND_FILES_TO_IGNORE = set(['.DS_Store', "repo343"])
 
 # Checks in the given current working directory.
 # Globals: None.
@@ -41,7 +44,7 @@ def walk_directory():
         a_dir_name[:] = [d for d in a_dir_name if d not in g_DIRECTORY_AND_FILES_TO_IGNORE]
 
         # get rid of files that are in the ignore set.
-        a_file_names[:] = [f for f in a_file_names if f not in g_DIRECTORY_AND_FILES_TO_IGNORE]
+        a_file_names[:] = [d for d in a_file_names if d not in g_DIRECTORY_AND_FILES_TO_IGNORE]
 
         a_list_of_files = [] # List to store path of files.
 
@@ -64,7 +67,12 @@ def copy_files(a_file_path):
         for file in a_file_path[files]:
 
             # Path of project tree inside the repo.
-            directoryPath = g_NAME_OF_REPO + "/" + file
+            directoryPath = g_NAME_OF_REPO + "/" + argv[0].split("/")[-1]
+
+            for x in range(len(files.split("/"))-1, files.split("/").index(argv[0].split("/")[-1]), -1):
+                    directoryPath += "/" + files.split("/")[x]
+
+            directoryPath = directoryPath + "/" + file
 
             # The check sum name of the given.
             checkSumName = check_sum(files + "/" + file)
@@ -89,14 +97,25 @@ def write_parent(manifest_file):
     a_manifest_file = [] # Array to keep track of manifest file names
 
     # loop through the MANIFEST directory.
-    for (a_dir_path, a_dir_name, a_file_names) in os.walk(g_NAME_OF_MANIFEST_FOLDER):
+    for (a_dir_path, a_dir_name, a_file_names) in os.walk(get_directory(), topdown = True):
 
-        a_manifest_file = a_file_names # set the a_manifest_file array to a_file_names
+        # get rid of directories that are in the ignore set.
+        a_dir_name[:] = [d for d in a_dir_name if d not in g_DIRECTORY_AND_FILES_TO_IGNORE]
+        # get rid of files that are in the ignore set.
+        a_file_names[:] = [d for d in a_file_names if d not in g_DIRECTORY_AND_FILES_TO_IGNORE]
 
-    a_manifest_file.sort() # Sort the given file names in ascending order.
+        # set the a_manifest_file array to a_file_names
+        for file in a_file_names:
+            a_manifest_file.append(file)
+
+    # Remove all files that doesn't have the MANIFEST_ prefix
+    a_manifest_file = [a for a in a_manifest_file if "MANIFEST_" in a]
 
     # The latest manifest will be written as the parent.
-    manifest_file.write("\nParent file: " + str(a_manifest_file[-2]))
+    manifest_file.write("\nParent file: " + a_manifest_file[0])
+
+    # Remove old manifest file in the Projet Tree
+    os.remove(get_directory() + a_manifest_file[0])
 
 # Creates the manifest file for the repo343 directory.
 # Globals: g_NAME_OF_MANIFEST_FOLDER use for file path.
@@ -104,8 +123,11 @@ def write_parent(manifest_file):
 def create_manifest(directory_list):
     """Creates the manifest file for the repo343 directory."""
 
+    # Manifest File Name
+    manifest_name = "MANIFEST_" + str(datetime.now()) + ".txt"
+
     # Sets the file name of MANIFEST to the current datetime.
-    MANIFEST = g_NAME_OF_MANIFEST_FOLDER + "/" + str(datetime.now())
+    MANIFEST = g_NAME_OF_MANIFEST_FOLDER + "/" + manifest_name
 
     # Create and open manifest file.
     manifest_file = open(MANIFEST, 'w+')
@@ -119,56 +141,8 @@ def create_manifest(directory_list):
     # Close manifest file.
     manifest_file.close()
 
-# Write the project tree to the manifest file.
-# Globals: None.
-# A line count = 7
-def write_hierarchy(manifest_file, directory_list):
-    """Writes the project hierarchy to the manifest file."""
-
-    file_byte = 0L # Variable to get total byte size of files.
-
-    # Write to file and get the path for all the files.
-    a_file_listing = write_file(manifest_file, directory_list)
-
-    # Get total byte size for every files.
-    for file in a_file_listing:
-        file_byte += os.stat(file).st_size
-
-    # Write the number of files and the total size of files.
-    manifest_file.write(str(len(a_file_listing)) + " Files\t" + str(file_byte) + " Bytes" + "\n")
-
-    # sets the current_date to todays month/day/year respectively.
-    current_date = str(datetime.now().month) + "/" + str(datetime.now().day) + "/" + str(datetime.now().year)
-
-    # Write the current date to the file.
-    manifest_file.write(current_date)
-
-# Helper function for write_hierarchy.
-# Globals: g_NAME_OF_REPO use for writing project tree.
-# A line count = 8
-def write_file(manifest_file, directory_list):
-    """Helper function for write_hierarchy."""
-
-    a_file_listing = [] # Array to hold all file path.
-
-    manifest_file.write("Project Tree Structure: \n") # Write string to file
-
-    # Write the name of the repo to show project tree
-    manifest_file.write("\t" + g_NAME_OF_REPO + "\n")
-
-    # loops through the directory in the directoy_list
-    for directory in directory_list:
-
-        # loops through the file name contained in directory_list[directory]
-        for file in directory_list[directory]:
-
-            # Writes the path name to the file
-            manifest_file.write("\t\t" + g_NAME_OF_REPO + "/" + file + "/" + check_sum(directory + "/" + file)+ "\n")
-
-            # Append path for files to listing
-            a_file_listing.append(g_NAME_OF_REPO + "/" + file + "/" + check_sum(directory + "/" + file))
-
-    return a_file_listing # return list of file paths.
+    # Copy manifest file to the Project Tree Folder
+    shutil.copyfile(MANIFEST, get_directory() + manifest_name)
 
 # Check if the script is ran independently.
 if __name__ == "__main__":

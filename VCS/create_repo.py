@@ -1,10 +1,10 @@
 import os
 import shutil
-import sys
+from sys import argv
 from datetime import datetime
 
-g_NAME_OF_REPO = sys.argv[1] + "/repo343" # Repo Directory Path.
-g_NAME_OF_MANIFEST_FOLDER = sys.argv[1] + "/repo343/MANIFEST" # Manifest Directory Path.
+g_NAME_OF_REPO = argv[1] + "/repo343" # Repo Directory Path.
+g_NAME_OF_MANIFEST_FOLDER = argv[1] + "/repo343/MANIFEST" # Manifest Directory Path.
 
 
 # Creates a repo343 that stores all the files for the project tree.
@@ -42,7 +42,7 @@ def copy_tree():
     FILES_TO_IGNORE = '.DS_Store'
 
     # Copies the project tree to the repo343 directory.
-    shutil.copytree(sys.argv[0], g_NAME_OF_REPO, ignore = shutil.ignore_patterns(FILES_TO_IGNORE))
+    shutil.copytree(argv[0], g_NAME_OF_REPO + "/" + argv[0].split("/")[-1], ignore = shutil.ignore_patterns(FILES_TO_IGNORE))
 
 # Walk through the initial repo343 directory.
 # Globals: parameter use for g_NAME_OF_REPO and g_NAME_OF_MANIFEST_FOLDER
@@ -76,7 +76,7 @@ def create_manifest(directory_list):
     """Creates the manifest file for the repo343 directory."""
 
     # Manifest File Name
-    manifest_name = str(datetime.now())
+    manifest_name = "MANIFEST_" + str(datetime.now()) + ".txt"
 
     # Sets the file name of MANIFEST to the current datetime.
     MANIFEST = g_NAME_OF_MANIFEST_FOLDER + "/" + manifest_name
@@ -90,12 +90,11 @@ def create_manifest(directory_list):
     # Write parent manifest file to current manifest file.
     manifest_file.write("\nParent file: null")
 
-
-    # Copy manifest file to the Project Tree Folder
-    shutil.copy(MANIFEST, sys.argv[0] + "/" + manifest_name)
-
     # Close manifest file.
     manifest_file.close()
+
+    # Copy manifest file to the Project Tree Folder
+    shutil.copyfile(MANIFEST, get_directory() + manifest_name)
 
 # Write the project tree to the manifest file.
 # Globals: None.
@@ -136,7 +135,7 @@ def write_file(manifest_file, directory_list):
 
         # Write the directory path in file except for the mainfest file.
         if directory != g_NAME_OF_MANIFEST_FOLDER and directory != g_NAME_OF_REPO:
-            manifest_file.write("\t" + directory + "\n")
+            # manifest_file.write("\t" + directory + "\n")
 
             # loop through the file in the list of files
             for files in directory_list[directory]:
@@ -145,7 +144,7 @@ def write_file(manifest_file, directory_list):
                 a_file_listing.append(directory + "/" + files)
 
                 # write the path for the file and its checksum
-                manifest_file.write("\t\t" + directory + "/" + files + "/" + check_sum(directory + "/" + files) + "\n")
+                manifest_file.write("\t" + directory + "/" + files + "/" + check_sum(directory + "/" + files) + "\n")
     return a_file_listing # return list of file paths.
 
 
@@ -194,6 +193,12 @@ def check_sum(file_name):
     file.close() # close the file.
 
     return str(check_sum) # return string representation of check_sum.
+
+def get_directory():
+    src = ""
+    for x in range (len(argv[0].split("/")) - 1):
+        src += argv[0].split("/")[x] + "/"
+    return src
 
 # Check if the script is ran independently.
 if __name__ == "__main__":
