@@ -94,11 +94,7 @@ def create_manifest(directory_list):
     manifest_file.close()
 
     # Copy manifest file to the Project Tree Folder
-    src = ""
-    for x in range (len(argv[0].split("/")) - 1):
-        src += argv[0].split("/")[x] + "/"
-
-    shutil.copyfile(MANIFEST, src + manifest_name)
+    shutil.copyfile(MANIFEST, get_directory() + manifest_name)
 
 # Write the project tree to the manifest file.
 # Globals: None.
@@ -197,6 +193,12 @@ def check_sum(file_name):
     file.close() # close the file.
 
     return str(check_sum) # return string representation of check_sum.
+
+def get_directory():
+    src = ""
+    for x in range (len(argv[0].split("/")) - 1):
+        src += argv[0].split("/")[x] + "/"
+    return src
 
 # Check if the script is ran independently.
 if __name__ == "__main__":
