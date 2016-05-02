@@ -26,7 +26,7 @@ def merge_interface():
     while user_input < 1 or len(a_manifest_files) < user_input:
         user_input = type_input(a_manifest_files)
 
-    print a_manifest_files[user_input]    
+    print a_manifest_files[user_input]
 
 
 # Gets the list of mainfest files.
