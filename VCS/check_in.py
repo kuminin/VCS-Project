@@ -3,8 +3,8 @@ from create_repo import get_directory
 from create_repo import write_hierarchy
 from datetime import datetime
 from sys import argv
-import create_repo
-import os, shutil
+import os
+import shutil
 
 # Current Working Directory Path.
 g_NAME_OF_CURRENT_DIRECTORY = argv[0]
