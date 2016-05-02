@@ -52,7 +52,7 @@ def get_manifest():
 
     return remove_target(a_manifest_files) # return the list of file names.
 
-
+# Removes the manifest files that the user can
 def remove_target(a_manifest_files):
     a_temp_manifest_files = []
     owner = g_NAME_OF_PT_PATH.split("/")[-1]
@@ -62,3 +62,8 @@ def remove_target(a_manifest_files):
             a_temp_manifest_files.append(files)
 
     return a_temp_manifest_files
+
+
+# Check if the script is ran independently.
+if __name__ == "__main__":
+    merge_interface()
