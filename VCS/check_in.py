@@ -18,16 +18,19 @@ g_NAME_OF_MANIFEST_FOLDER = argv[1] + "/repo343/MANIFEST"
 # A set of files and directories to ignore.
 g_DIRECTORY_AND_FILES_TO_IGNORE = set(['.DS_Store', "repo343"])
 
+
 # Checks in the given current working directory.
 # Globals: None.
 # A line count = 3
 def check_in():
     """Checks in the given current working directory."""
-    a_file_path = walk_directory() # Calls walk_directory function to get the map of file paths.
 
-    copy_files(a_file_path) # Calls copy_files function
+    # Calls walk_directory function to get the map of file paths.
+    a_file_path = walk_directory()
 
-    create_manifest(a_file_path) # Calls create_manifest function
+    copy_files(a_file_path)  # Calls copy_files function
+
+    create_manifest(a_file_path)  # Calls create_manifest function
 
 # Walks through the current working diretory.
 # Globals: g_NAME_OF_CURRENT_DIRECTORY use for walking project tree.
@@ -124,7 +127,7 @@ def create_manifest(directory_list):
     """Creates the manifest file for the repo343 directory."""
 
     # Manifest File Name
-    manifest_name = "MANIFEST_" + str(datetime.now()) + ".txt"
+    manifest_name = "MANIFEST_" + argv[0].split("/")[-2] + "_" + str(datetime.now()) + ".txt"
 
     # Sets the file name of MANIFEST to the current datetime.
     MANIFEST = g_NAME_OF_MANIFEST_FOLDER + "/" + manifest_name

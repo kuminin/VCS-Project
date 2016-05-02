@@ -40,10 +40,10 @@ def copy_files(a_manifest_files, user_input):
 
     manifest_file_path = g_NAME_OF_MANIFEST_FOLDER + "/" + a_manifest_files[user_input - 1]
 
-    shutil.copy(manifest_file_path, g_NAME_OF_CURRENT_DIRECTORY)
+    copy_manifest(manifest_file_path)
 
     # open manifest file as read only.
-    manifest_file = open(g_NAME_OF_MANIFEST_FOLDER + "/" + a_manifest_files[user_input-1], "r")
+    manifest_file = open(manifest_file_path, "r")
 
     # reads the manifes_file line by line and trim white spaces
     for line in manifest_file:
@@ -54,9 +54,9 @@ def copy_files(a_manifest_files, user_input):
     print a_file_lines
 
     # copies the files from the project leaf tree into our target destination.
-    for i in range(1,len(a_file_lines) - 3):
+    for i in range(1, len(a_file_lines) - 3):
         a_file_path = a_file_lines[i].split("/")
-        project_tree_name = a_file_path[a_file_path.index("repo343") + 1]
+        project_tree_name = a_file_path[a_file_path.index(manifest_file_path.split("_")[1]) + 1]
         project_tree_path = g_NAME_OF_CURRENT_DIRECTORY + "/" + project_tree_name
         if not os.path.exists(project_tree_path):
             os.makedirs(project_tree_path)
@@ -64,9 +64,36 @@ def copy_files(a_manifest_files, user_input):
             sub_folder_directory = project_tree_path + "/" + a_file_path[a_file_path.index(project_tree_name) + 1]
             if not os.path.exists(sub_folder_directory):
                 os.makedirs(sub_folder_directory)
-            shutil.copy("/".join(a_file_path), sub_folder_directory + "/" + a_file_path[-2])
+            shutil.copy(get_file(a_file_path, manifest_file_path), sub_folder_directory + "/" + a_file_path[-2])
         else:
-            shutil.copy("/".join(a_file_path), project_tree_path + "/" + a_file_path[-2])
+            shutil.copy(get_file(a_file_path, manifest_file_path), project_tree_path + "/" + a_file_path[-2])
+
+
+def get_file(a_file_path, manifest_file_path):
+    temp_name_of_repo = g_NAME_OF_REPO
+    project_tree_name = a_file_path.index(manifest_file_path.split("_")[1]) + 1
+    for i in range(project_tree_name, len(a_file_path)):
+        temp_name_of_repo = temp_name_of_repo + "/" + a_file_path[i]
+    return temp_name_of_repo
+
+def copy_manifest(manifest_file_path):
+    a_manifest_file_lines = []
+    date_time_now = str(datetime.now())
+    child_manifest_path = g_NAME_OF_CURRENT_DIRECTORY + "/" + "MANIFEST_" + argv[1].split("/")[-1] + "_" + date_time_now + ".txt"
+    parent_manifest_file = open(manifest_file_path, "r")
+    for line in parent_manifest_file:
+        a_manifest_file_lines.append(line)
+    parent_manifest_file.close()
+
+    child_manifest_file = open(child_manifest_path, "w+")
+
+    for i in range(len(a_manifest_file_lines)-1):
+        child_manifest_file.write(a_manifest_file_lines[i])
+
+    child_manifest_file.write("Parent file: " + manifest_file_path.split("/")[-1])
+
+    child_manifest_file.close()
+    shutil.copy(child_manifest_path, g_NAME_OF_MANIFEST_FOLDER)
 
 
 # Ask user for the Manifest they'd like to check_out.
@@ -102,8 +129,14 @@ def get_manifest():
 
     # walk through the manifest folder directory
     for (a_dir_path, a_dir_name, a_file_names) in os.walk(g_NAME_OF_MANIFEST_FOLDER):
-            # Set the file names in the manifest folder directory to the a_manifest_files
-            a_manifest_files = a_file_names
+                # get rid of directories that are in the ignore set.
+        a_dir_name[:] = [d for d in a_dir_name if d not in g_DIRECTORY_AND_FILES_TO_IGNORE]
+
+        # get rid of files that are in the ignore set.
+        a_file_names[:] = [d for d in a_file_names if d not in g_DIRECTORY_AND_FILES_TO_IGNORE]
+
+        # Set the file names in the manifest folder directory to the a_manifest_files
+        a_manifest_files = a_file_names
 
     a_manifest_files.sort() # Sort the list of file names.
 
