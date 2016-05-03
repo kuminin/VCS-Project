@@ -7,7 +7,7 @@ if __name__ == "__main__":
         print "python main.py create_repo [Project Tree Source Location] [Repo Destination]"
         print "python main.py check_in [Project Tree Source Location] [Repo Destination]"
         print "python main.py check_out [Repo Source Location] [Project Tree Destination]"
-        print "python main.py merge [Repo Source Location] [Project Tree Destination]"
+        print "python main.py merge [Repo Source Location] [Project Tree Source Location]"
     elif len(sys.argv) < 4:
         print "Please type python main.py help to show allowed commands"
     else:

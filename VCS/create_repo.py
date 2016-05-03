@@ -128,7 +128,7 @@ def write_hierarchy(manifest_file, directory_list):
     manifest_file.write(str(len(a_file_listing)) + " Files\t" + str(file_byte) + " Bytes" + "\n")
 
     # sets the current_date to todays month/day/year respectively.
-    current_date = str(datetime.now().month) + "/" + str(datetime.now().day) + "/" + str(datetime.now().year)
+    current_date = str(datetime.now().month) + "-" + str(datetime.now().day) + "-" + str(datetime.now().year)
 
     # Write the current date to the file.
     manifest_file.write(current_date)
