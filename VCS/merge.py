@@ -2,6 +2,8 @@ import os
 import shutil
 from sys import argv
 from datetime import datetime
+from create_repo import check_sum
+from create_repo import write_hierarchy
 from check_out import type_input
 
 
@@ -30,6 +32,34 @@ def merge_interface():
     repo_manifest_path = g_NAME_OF_MANIFEST_FOLDER + "/" + a_manifest_files[user_input-1]
 
     check_conflict(repo_manifest_path)
+    create_manifest(walk_directory(), a_manifest_files[user_input - 1])
+
+# Walks through the current working diretory.
+# Globals: g_NAME_OF_CURRENT_DIRECTORY use for walking project tree.
+# Globals: g_DIRECTORY_AND_FILES_TO_IGNORE use for ignoring directory and files.
+# A line count = 9
+def walk_directory():
+    """Walks through the current working diretory."""
+    a_path_for_files = {} # Map to store list of paths
+
+    # Walk in the given current directory.
+    for (a_dir_path, a_dir_name, a_file_names) in os.walk(g_NAME_OF_PT_PATH, topdown = True):
+
+        # get rid of directories that are in the ignore set.
+        a_dir_name[:] = [d for d in a_dir_name if d not in g_DIRECTORY_AND_FILES_TO_IGNORE]
+
+        # get rid of files that are in the ignore set.
+        a_file_names[:] = [d for d in a_file_names if d not in g_DIRECTORY_AND_FILES_TO_IGNORE]
+
+        a_list_of_files = [] # List to store path of files.
+
+        for file_name in a_file_names:
+
+            a_list_of_files.append(file_name) # append files to list.
+
+        a_path_for_files[a_dir_path] = a_list_of_files # Map the list
+
+    return a_path_for_files # return the map of file paths.
 
 def check_conflict(repo_manifest_path):
     tree_path, tree_file = get_file(target_manifest())
@@ -162,6 +192,59 @@ def remove_target(a_manifest_files):
             a_temp_manifest_files.append(files)
 
     return a_temp_manifest_files
+
+
+
+# Creates the manifest file for the repo343 directory.
+# Globals: g_NAME_OF_MANIFEST_FOLDER use for file path.
+# A line count = 5
+def create_manifest(directory_list, repo_manifest_file):
+    """Creates the manifest file for the repo343 directory."""
+
+    # Manifest File Name
+    manifest_name = "MANIFEST_" + argv[1].split("/")[-2] + "_" + str(datetime.now()) + ".txt"
+
+    # Sets the file name of MANIFEST to the current datetime.
+    MANIFEST = g_NAME_OF_MANIFEST_FOLDER + "/" + manifest_name
+
+    # Create and open manifest file.
+    manifest_file = open(MANIFEST, 'w+')
+
+    # Write project tree hierachy to manifest file.
+    write_hierarchy(manifest_file, directory_list)
+
+    # Writes the parent file to the manifest
+    write_parent(manifest_file, repo_manifest_file)
+
+    # Close manifest file.
+    manifest_file.close()
+
+    # Copy manifest file to the Project Tree Folder
+    shutil.copyfile(MANIFEST, target_directory() + manifest_name)
+
+# Writes the parent manifest file to the current manifest file.
+# Globals: g_NAME_OF_MANIFEST_FOLDER use for getting manifest files.
+# A line count = 5
+def write_parent(manifest_file, repo_manifest_file):
+    """Writes the parent manifest file to the current manifest file."""
+
+    current_manifest = target_manifest().split("/")[-1]
+    # The latest manifest will be written as the parent.
+    manifest_file.write("\nParent file: " + current_manifest)
+    manifest_file.write(": " + repo_manifest_file)
+
+    # Remove old manifest file in the Projet Tree
+    os.remove(target_directory() + current_manifest)
+
+
+
+def target_directory():
+    src = ""
+    for x in range(len(g_NAME_OF_PT_PATH.split("/")) - 1):
+        src += g_NAME_OF_PT_PATH.split("/")[x] + "/"
+    return src
+
+
 
 
 # Check if the script is ran independently.
