@@ -7,19 +7,19 @@ import os
 import shutil
 
 # Current Working Directory Path.
-g_NAME_OF_CURRENT_DIRECTORY = argv[0]
+g_NAME_OF_PT_PATH = argv[0]
 
 # Repo Directory Path.
-g_NAME_OF_REPO = argv[1] + "/repo343"
+g_NAME_OF_REPO_PATH = argv[1] + "/repo343"
 
 # Manifest Directory Path.
-g_NAME_OF_MANIFEST_FOLDER = argv[1] + "/repo343/MANIFEST"
+g_NAME_OF_MANIFEST_PATH = argv[1] + "/repo343/MANIFEST"
 
 # A set of files and directories to ignore.
 g_DIRECTORY_AND_FILES_TO_IGNORE = set(['.DS_Store', "repo343"])
 
 
-# Checks in the given current working directory.
+# Checks in the given project tree.
 # Globals: None.
 # A line count = 3
 def check_in():
@@ -32,16 +32,16 @@ def check_in():
 
     create_manifest(a_file_path)  # Calls create_manifest function
 
-# Walks through the current working diretory.
-# Globals: g_NAME_OF_CURRENT_DIRECTORY use for walking project tree.
+# Walks through the project tree.
+# Globals: g_NAME_OF_PT_PATH use for walking project tree.
 # Globals: g_DIRECTORY_AND_FILES_TO_IGNORE use for ignoring directory and files.
 # A line count = 9
 def walk_directory():
-    """Walks through the current working diretory."""
+    """Walks through the project tree."""
     a_path_for_files = {} # Map to store list of paths
 
-    # Walk in the given current directory.
-    for (a_dir_path, a_dir_name, a_file_names) in os.walk(g_NAME_OF_CURRENT_DIRECTORY, topdown = True):
+    # Walk in the project directory.
+    for (a_dir_path, a_dir_name, a_file_names) in os.walk(g_NAME_OF_PT_PATH, topdown = True):
 
         # get rid of directories that are in the ignore set.
         a_dir_name[:] = [d for d in a_dir_name if d not in g_DIRECTORY_AND_FILES_TO_IGNORE]
@@ -49,8 +49,10 @@ def walk_directory():
         # get rid of files that are in the ignore set.
         a_file_names[:] = [d for d in a_file_names if d not in g_DIRECTORY_AND_FILES_TO_IGNORE]
 
+        # Create a list for files
         a_list_of_files = [] # List to store path of files.
 
+        # Loop through files in file names list
         for file_name in a_file_names:
 
             a_list_of_files.append(file_name) # append files to list.
@@ -60,8 +62,8 @@ def walk_directory():
     return a_path_for_files # return the map of file paths.
 
 # Copies files to their respective project tree directory.
-# Globals: g_NAME_OF_REPO use for writing project tree.
-# A line count = 8
+# Globals: g_NAME_OF_REPO_PATH use for writing project tree.
+# A line count = 6
 def copy_files(a_file_path):
     """Copies files to their respective project tree directory."""
 
@@ -70,33 +72,40 @@ def copy_files(a_file_path):
         for file in a_file_path[files]:
 
             # Path of project tree inside the repo.
-            directoryPath = g_NAME_OF_REPO + "/" + argv[0].split("/")[-1]
+            directory_path = g_NAME_OF_REPO_PATH + "/" + argv[0].split("/")[-1]
 
+            # Loop to get directory path
             for x in range(len(files.split("/"))-1, files.split("/").index(argv[0].split("/")[-1]), -1):
-                    directoryPath += "/" + files.split("/")[x]
+                    directory_path += "/" + files.split("/")[x]
 
-            directoryPath = directoryPath + "/" + file
+            # Calls copy_helper funciton to copy files
+            copy_helper(directory_path + "/" + file, check_sum(files + "/" + file))
 
-            # The check sum name of the given.
-            checkSumName = check_sum(files + "/" + file)
+# Copies files to their respective project tree directory.
+# Globals: None.
+# A line count = 4
+def copy_helper(directory_path, check_sum_name):
+    """Copies files to their respective project tree directory."""
 
-            # Check if the file project tree directory exists.
-            if not os.path.isdir(directoryPath):
+    # Check if the file project tree directory exists.
+    if not os.path.isdir(directory_path):
 
-                # Create the project tree directory.
-                os.makedirs(directoryPath)
+        # Create the project tree directory.
+        os.makedirs(directory_path)
 
-            # check if the checkSumName already exists in their respective project tree directory.
-            if not os.path.exists(directoryPath + "/" + checkSumName):
+    # check if the check_sum_name already exists in their respective project tree directory.
+    if not os.path.exists(directory_path + "/" + check_sum_name):
+        # Copy the files in the project tree to the repo.
+        shutil.copyfile(files + "/" + file, directory_path + "/" + check_sum_name)
 
-                # Copy the files in the current working directory to their respective project tree directory.
-                shutil.copyfile(files + "/" + file, directoryPath + "/" + checkSumName)
 
 # Writes the parent manifest file to the current manifest file.
-# Globals: g_NAME_OF_MANIFEST_FOLDER use for getting manifest files.
-# A line count = 5
+# Globals: g_NAME_OF_MANIFEST_PATH use for getting manifest files.
+# Globals: g_DIRECTORY_AND_FILES_TO_IGNORE use for ignoring directory and files.
+# A line count = 9
 def write_parent(manifest_file):
     """Writes the parent manifest file to the current manifest file."""
+
     a_manifest_file = [] # Array to keep track of manifest file names
 
     # loop through the MANIFEST directory.
@@ -104,6 +113,7 @@ def write_parent(manifest_file):
 
         # get rid of directories that are in the ignore set.
         a_dir_name[:] = [d for d in a_dir_name if d not in g_DIRECTORY_AND_FILES_TO_IGNORE]
+
         # get rid of files that are in the ignore set.
         a_file_names[:] = [d for d in a_file_names if d not in g_DIRECTORY_AND_FILES_TO_IGNORE]
 
@@ -121,16 +131,17 @@ def write_parent(manifest_file):
     os.remove(get_directory() + a_manifest_file[0])
 
 # Creates the manifest file for the repo343 directory.
-# Globals: g_NAME_OF_MANIFEST_FOLDER use for file path.
-# A line count = 5
+# Globals: g_NAME_OF_MANIFEST_PATH use for file path.
+# Globals: g_NAME_OF_PT_PATH  to get project name.
+# A line count = 7
 def create_manifest(directory_list):
     """Creates the manifest file for the repo343 directory."""
 
     # Manifest File Name
-    manifest_name = "MANIFEST_" + argv[0].split("/")[-2] + "_" + str(datetime.now()) + ".txt"
+    manifest_name = "MANIFEST_" + g_NAME_OF_PT_PATH.split("/")[-2] + "_" + str(datetime.now()) + ".txt"
 
     # Sets the file name of MANIFEST to the current datetime.
-    MANIFEST = g_NAME_OF_MANIFEST_FOLDER + "/" + manifest_name
+    MANIFEST = g_NAME_OF_MANIFEST_PATH + "/" + manifest_name
 
     # Create and open manifest file.
     manifest_file = open(MANIFEST, 'w+')

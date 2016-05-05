@@ -5,19 +5,20 @@ import create_repo
 import os, shutil
 
 # Current Working Directory Path.
-g_NAME_OF_CURRENT_DIRECTORY = argv[1]
+g_NAME_OF_PT_PATH = argv[1]
+
 # Repo Directory Path.
-g_NAME_OF_REPO = argv[0] + "/repo343"
+g_NAME_OF_REPO_PATH = argv[0] + "/repo343"
 
 # Manifest Directory Path.
-g_NAME_OF_MANIFEST_FOLDER = argv[0] + "/repo343/MANIFEST"
+g_NAME_OF_MANIFEST_PATH = argv[0] + "/repo343/MANIFEST"
 
 # A set of files and directories to ignore.
 g_DIRECTORY_AND_FILES_TO_IGNORE = set(["repo343", ".DS_Store"])
 
 # Checks out a given project manifest based on user input.
 # Globals: None.
-# A line count = 6
+# A line count = 5
 def check_out():
     """Checks out a given project manifest based on user input."""
 
@@ -32,14 +33,17 @@ def check_out():
     copy_files(a_manifest_files, user_input) # Copies the files into the current working directory.
 
 # Copies the files into the current working directory.
-# Globals: g_NAME_OF_MANIFEST_FOLDER use for manifest file path.
-# A line count = 8
+# Globals: g_NAME_OF_MANIFEST_PATH use for manifest file path.
+# A line count = 7
 def copy_files(a_manifest_files, user_input):
     """Copies the files into the current working directory."""
+
     a_file_lines = [] # list to store all the lines in manifest file.
 
-    manifest_file_path = g_NAME_OF_MANIFEST_FOLDER + "/" + a_manifest_files[user_input - 1]
+    # The manifest file path from the user input
+    manifest_file_path = g_NAME_OF_MANIFEST_PATH + "/" + a_manifest_files[user_input - 1]
 
+    # copy the manifest to the Project Tree Destination
     copy_manifest(manifest_file_path)
 
     # open manifest file as read only.
@@ -51,50 +55,115 @@ def copy_files(a_manifest_files, user_input):
 
     manifest_file.close() # close the manifes file
 
-    print a_file_lines
-
     # copies the files from the project leaf tree into our target destination.
-    for i in range(1, len(a_file_lines) - 3):
-        a_file_path = a_file_lines[i].split("/")
+    for num in range(1, len(a_file_lines) - 3):
+        copy_helper(num, a_file_lines, manifest_file_path)
+
+# Copies files from the repo to our targe destination.
+# Globals: g_NAME_OF_PT_PATH use for project tree path.
+# A Line Count = 9
+def copy_helper(num, a_file_lines, manifest_file_path):
+        """copies files from the repo to our target destination."""
+
+        # Array of a file path that was from the line of manifest.
+        a_file_path = a_file_lines[num].split("/")
+
+        # The project tree name for the from the a_file_path
         project_tree_name = a_file_path[a_file_path.index(manifest_file_path.split("_")[1]) + 1]
-        project_tree_path = g_NAME_OF_CURRENT_DIRECTORY + "/" + project_tree_name
-        if not os.path.exists(project_tree_path):
-            os.makedirs(project_tree_path)
+
+        # The project_tree_path is the name of the PT destination and the project tree name
+        project_tree_path = g_NAME_OF_PT_PATH + "/" + project_tree_name
+
+        create_directory(project_tree_path) # Call create_directory
+
+        # Check if the root has a file
         if (len(a_file_path) - 1) - a_file_path.index(project_tree_name) > 2:
-            sub_folder_directory = project_tree_path + "/" + a_file_path[a_file_path.index(project_tree_name) + 1]
-            if not os.path.exists(sub_folder_directory):
-                os.makedirs(sub_folder_directory)
+
+            # get the sub_folder_directory_path from the project_tree_path and the subdirectory name
+            sub_folder_directory_path = project_tree_path + "/" + a_file_path[a_file_path.index(project_tree_name) + 1]
+
+            # Call create directory to create the sub_folder_directory
+            create_directory(sub_folder_directory_path)
+
+            # Copy the file to the sub directory
             shutil.copy(get_file(a_file_path, manifest_file_path), sub_folder_directory + "/" + a_file_path[-2])
+
         else:
+            # copy the file to the root
             shutil.copy(get_file(a_file_path, manifest_file_path), project_tree_path + "/" + a_file_path[-2])
 
+# Creates a project directory if a path to that directory doesn't exist.
+# Globals: None
+# A Line Count = 2
+def create_directory(project_path):
+    """Creates a project directory if a path to that directory doesn't exist."""
 
+    # Check if the path exists
+    if not os.path.exists(project_path):
+        os.makedirs(project_path) # Make the directory for the path
+
+# Gets the path of the file in our new checked out rep
+# Globals: g_NAME_OF_REPO_PATH use for temporary variable
+# A Line Count = 5
 def get_file(a_file_path, manifest_file_path):
-    temp_name_of_repo = g_NAME_OF_REPO
-    project_tree_name = a_file_path.index(manifest_file_path.split("_")[1]) + 1
-    for i in range(project_tree_name, len(a_file_path)):
-        temp_name_of_repo = temp_name_of_repo + "/" + a_file_path[i]
-    return temp_name_of_repo
+    """Gets the path of the file in our new checked out rep"""
 
+    temp_name_of_repo = g_NAME_OF_REPO_PATH # set temp_name_of_repo
+
+    # set the project tree name index
+    project_tree_name_index = a_file_path.index(manifest_file_path.split("_")[1]) + 1
+
+    # Appends to the temp_name_of_repo to create a file path
+    for num in range(project_tree_name_index, len(a_file_path)):
+        temp_name_of_repo = temp_name_of_repo + "/" + a_file_path[num]
+
+    return temp_name_of_repo # return the temp_name_of_repo
+
+# Copies the chose manifest file to the Repo destination.
+# Globals: g_NAME_OF_PT_PATH use for creating the child manifest path
+# Globals: g_NAME_OF_MANIFEST_PATH use for copying to the manifest folder path
+# A Line Count = 8
 def copy_manifest(manifest_file_path):
-    a_manifest_file_lines = []
-    date_time_now = str(datetime.now())
-    child_manifest_path = g_NAME_OF_CURRENT_DIRECTORY + "/" + "MANIFEST_" + argv[1].split("/")[-1] + "_" + date_time_now + ".txt"
+    """Copies the chose manifest file to the Repo destination."""
+
+    a_manifest_file_lines = [] # Declare an Array
+
+    # Declare a child_manifest_path to be the name of the project tree destination and its time.
+    child_manifest_path = g_NAME_OF_PT_PATH + "/" + "MANIFEST_" + g_NAME_OF_PT_PATH.split("/")[-1] + "_" + str(datetime.now()) + ".txt"
+
+    # open the manifest file as read only.
     parent_manifest_file = open(manifest_file_path, "r")
+
+    # append the lines from the manifest file inside the array
     for line in parent_manifest_file:
         a_manifest_file_lines.append(line)
+
+    # Close the parent file.
     parent_manifest_file.close()
 
+    # Call the write file function to create the new manifest file.
+    write_file(a_manifest_file_lines, child_manifest_path, manifest_file_path)
+
+    # Copy the new manifest file into the manifest file path.
+    shutil.copy(child_manifest_path, g_NAME_OF_MANIFEST_PATH)
+
+
+# A helper function to help write to the new manifest file
+# Globals: None
+# A Line Count = 5
+def write_file(a_manifest_file_lines, child_manifest_path, manifest_file_path):
+
+    # Create and open a file
     child_manifest_file = open(child_manifest_path, "w+")
 
-    for i in range(len(a_manifest_file_lines)-1):
-        child_manifest_file.write(a_manifest_file_lines[i])
+    # Write the contents from to the new manifest file from the child manifest.
+    for index in range(len(a_manifest_file_lines)-1):
+        child_manifest_file.write(a_manifest_file_lines[index])
 
+    # Write the parent file for the new manifest file.
     child_manifest_file.write("Parent file: " + manifest_file_path.split("/")[-1])
 
-    child_manifest_file.close()
-    shutil.copy(child_manifest_path, g_NAME_OF_MANIFEST_FOLDER)
-
+    child_manifest_file.close() # Close the new manifest file.
 
 # Ask user for the Manifest they'd like to check_out.
 # Globals: None.
@@ -120,15 +189,16 @@ def type_input(a_manifest_files):
     return number # return the user input.
 
 # Gets the list of mainfest files.
-# Globals: g_NAME_OF_MANIFEST_FOLDER.
-# A line count = 5
+# Globals: g_NAME_OF_MANIFEST_PATH to walk the directory for manifest path
+# Globals: g_DIRECTORY_AND_FILES_TO_IGNORE for removing ignoring files and directories.
+# A line count = 7
 def get_manifest():
     """Gets the list of mainfest files."""
 
     a_manifest_files = [] # list to contain the manifest file names.
 
     # walk through the manifest folder directory
-    for (a_dir_path, a_dir_name, a_file_names) in os.walk(g_NAME_OF_MANIFEST_FOLDER):
+    for (a_dir_path, a_dir_name, a_file_names) in os.walk(g_NAME_OF_MANIFEST_PATH):
                 # get rid of directories that are in the ignore set.
         a_dir_name[:] = [d for d in a_dir_name if d not in g_DIRECTORY_AND_FILES_TO_IGNORE]
 
