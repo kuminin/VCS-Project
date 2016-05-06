@@ -47,29 +47,18 @@ def merge_interface():
         log_file_name = create_log_file()
         shutil.copy(name_of_current_manifest, name_of_temp_manifest)
 
-        time.sleep(2)
-
         os.remove(name_of_current_manifest)
         os.remove(g_NAME_OF_MANIFEST_FOLDER + "/" + manifest_name)
         os.rename(name_of_temp_manifest, name_of_current_manifest)
 
-        time.sleep(2)
-
         if auto_merge(log_file_name) == 0:
-
-            time.sleep(2)
             os.remove(target_directory() + log_file_name)
             create_manifest(manifest_name, walk_directory(), a_manifest_files[user_input - 1])
         else:
-
-
-            time.sleep(2)
             os.remove(target_directory() + log_file_name)
             create_manifest(manifest_name, walk_directory(), a_manifest_files[user_input - 1])
 
             log_file_name = create_log_file()
-
-            time.sleep(2)
             os.remove(target_directory() + manifest_name)
             os.remove(g_NAME_OF_MANIFEST_FOLDER + "/" + manifest_name)
     else:
@@ -78,14 +67,8 @@ def merge_interface():
 
 def auto_merge(log_file):
     conflict = 0
-    log_file_path = target_manifest().split("/")
-    log_file_path.pop()
-    log_file_path.pop()
-    log_file_path.append(log_file)
-    print log_file_path
-    log_file_path = "/".join(log_file_path)
 
-    file = open(log_file_path, "r")
+    file = open(auto_helper(), "r")
     a_conflict_file_path = []
     for line in file:
         print line
@@ -95,7 +78,16 @@ def auto_merge(log_file):
             if merge_files(a_conflict_file_path) != 0:
                 conflict = -1
             a_conflict_file_path[:] = []
+    file.close()
     return conflict
+
+def auto_helper():
+    log_file_path = target_manifest().split("/")
+    log_file_path.pop()
+    log_file_path.pop()
+    log_file_path.append(log_file)
+    log_file_path = "/".join(log_file_path)
+    return log_file_path
 
 def merge_files(a_conflict_file_path):
     grandpa_file = a_conflict_file_path[0].strip()
@@ -125,21 +117,13 @@ def merge_files(a_conflict_file_path):
         temp_repo_path.append(check_sum_name)
         shutil.copy("/".join(target_file_path), "/".join(temp_repo_path))
 
-
-
-
-
-
-
-
-
-        # shutil.("/".join(target_file_path, )
         os.remove(grandpa_file)
         os.remove(repo_file)
         os.remove(target_file)
         return 0
     else:
         return -1
+
 # Walks through the current working diretory.
 # Globals: g_NAME_OF_CURRENT_DIRECTORY use for walking project tree.
 # Globals: g_DIRECTORY_AND_FILES_TO_IGNORE use for ignoring directory and files.
