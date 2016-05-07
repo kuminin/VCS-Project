@@ -102,7 +102,7 @@ Fred
         |       |       |-------A.txt
         |-------FB
         |       |-------Wonderful.txt
-        |       |-------Semeseter.txt
+        |       |-------Summer.txt
         |       |-------FF
         |       |       |-------Professor.txt
         |       |       |-------Siska.txt
