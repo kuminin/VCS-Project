@@ -77,6 +77,7 @@ There is a known issue with Ubuntu, am not sure with all linux platforms, where 
 Simple hierarchys of a given project tree will work, however, a complex hierarcy will not.
 
 Working Example:
+```
 Fred
 |-------PT
         |-------hello.txt
@@ -89,9 +90,10 @@ Fred
         |       |-------Bye.txt
         |-------FC
                 |-------Hello.java
+```
 
 Not Working Example:
-Fred
+```
 Fred
 |-------PT
         |-------FA
@@ -106,3 +108,4 @@ Fred
         |       |       |-------Siska.txt
         |-------FC
                 |-------Good_Bye_It_was_fun.java
+```
