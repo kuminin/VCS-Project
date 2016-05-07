@@ -26,7 +26,7 @@ We are assuming that the user knows where the repo directories and the project d
 ##### To create a repo for your project:
 Assuming that you have the VCS-Project directory in Downloads and you want to create a repo for a given project tree...
 ```
-python ~/Downloads/main.py create_repo ~/Desktop/home/Fred/PT ~/Desktop
+python ~/Downloads/VCS-Project/main.py create_repo ~/Desktop/home/Fred/PT ~/Desktop
 ```
 The user should not type / at the end of all arguments.
 
@@ -34,7 +34,7 @@ The user should not type / at the end of all arguments.
 ##### To Check In a Project:
 Assuming that you have changed the file in Fred and you want to check in...
 ```
-python ~/Downloads/main.py check_in ~/Desktop/home/Fred/PT ~/Desktop
+python ~/Downloads/VCS-Project/main.py check_in ~/Desktop/home/Fred/PT ~/Desktop
 ```
 The user should not type / at the end of all arguments.
 
@@ -42,7 +42,7 @@ The user should not type / at the end of all arguments.
 ##### To Check Out a Project to a new destination:
 Assuming that you created a new directory of Jack in the home directory...
 ```
-python ~/Downloads/main.py check_out ~/Desktop ~/Desktop/home/Jack
+python ~/Downloads/VCS-Project/main.py check_out ~/Desktop ~/Desktop/home/Jack
 ```
 The user should not type / at the end of all arguments and the destination is an empty directory that doesn't have a "MANIFEST_" file.
 
@@ -50,9 +50,21 @@ The user should not type / at the end of all arguments and the destination is an
 ##### To Merge a Project:
 Assuming that you checked in the directory you are merging...
 ```
-python ~/Downloads/main.py merge ~/Desktop ~/Desktop/home/Fred/PT
+python ~/Downloads/VCS-Project/main.py merge ~/Desktop ~/Desktop/home/Fred/PT
 ```
 The user should not type / at the end of all arguments
+
+If you would like to see auto merge in action, without conflicts, please run the following and make sure the VCS-Project is in the Downloads Directory:
+```
+python ~/Downloads/VCS-Project/main.py merge ~/Downloads/Sample/VCS-Project ~/Downloads/NonConflict/Fred/PT
+```
+When asked for input please type in 3 and press enter.
+
+If you would like to see auto merge in action, without conflicts, please run the following and make sure the VCS-Project is in the Downloads Directory:
+```
+python ~/Downloads/VCS-Project/main.py merge ~/Downloads/Sample/VCS-Project ~/Downloads/Conflict/Fred/PT
+```
+When asked for input please type in 2 and press enter.
 
 ### Extra Features
 None
@@ -60,4 +72,37 @@ None
 ### Bugs
 We are still not sure if the script will run on Windows OS.
 
-We are not sure if a if the software will work if a directory contains a directory of files. So I beleive this is another issue.
+There is a known issue with Ubuntu, am not sure with all linux platforms, where it creates a back directory inside the repo. This directory will have a "~" before the directory name.
+
+Simple hierarchys of a given project tree will work, however, a complex hierarcy will not.
+
+Working Example:
+Fred
+|-------PT
+        |-------hello.txt
+        |-------world.txt
+        |-------java.fool
+        |-------FA
+        |       |-------h.txt
+        |-------FB
+        |       |-------Car.txt
+        |       |-------Bye.txt
+        |-------FC
+                |-------Hello.java
+
+Not Working Example:
+Fred
+Fred
+|-------PT
+        |-------FA
+        |       |-------Have.txt
+        |       |-------FD
+        |       |       |-------A.txt
+        |-------FB
+        |       |-------Wonderful.txt
+        |       |-------Semeseter.txt
+        |       |-------FF
+        |       |       |-------Professor.txt
+        |       |       |-------Siska.txt
+        |-------FC
+                |-------Good_Bye_It_was_fun.java
