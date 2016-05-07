@@ -56,13 +56,13 @@ The user should not type / at the end of all arguments
 
 If you would like to see auto merge in action, without conflicts, please run the following and make sure the VCS-Project is in the Downloads Directory:
 ```
-python ~/Downloads/VCS-Project/main.py merge ~/Downloads/Sample/VCS-Project ~/Downloads/NonConflict/Fred/PT
+python ~/Downloads/VCS-Project/main.py merge ~/Downloads/VCS-Project/NonConflict ~/Downloads/NonConflict/Fred/PT
 ```
-When asked for input please type in 3 and press enter.
+When asked for input please type in 2 and press enter.
 
 If you would like to see auto merge in action, without conflicts, please run the following and make sure the VCS-Project is in the Downloads Directory:
 ```
-python ~/Downloads/VCS-Project/main.py merge ~/Downloads/Sample/VCS-Project ~/Downloads/Conflict/Fred/PT
+python ~/Downloads/VCS-Project/main.py merge ~/Downloads/VCS-Project/Conflict ~/Downloads/Conflict/Fred/PT
 ```
 When asked for input please type in 2 and press enter.
 

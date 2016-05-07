@@ -86,7 +86,7 @@ def copy_helper(num, a_file_lines, manifest_file_path):
             create_directory(sub_folder_directory_path)
 
             # Copy the file to the sub directory
-            shutil.copy(get_file(a_file_path, manifest_file_path), sub_folder_directory + "/" + a_file_path[-2])
+            shutil.copy(get_file(a_file_path, manifest_file_path), sub_folder_directory_path + "/" + a_file_path[-2])
 
         else:
             # copy the file to the root

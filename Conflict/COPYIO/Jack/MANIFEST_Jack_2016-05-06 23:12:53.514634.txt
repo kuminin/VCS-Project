@@ -1,0 +1,7 @@
+Project Tree Structure: 
+	/Users/kuminin/Downloads/VCS-Project/Conflict/Jack/PT/FA/c.txt/214
+	/Users/kuminin/Downloads/VCS-Project/Conflict/Jack/PT/FA/x.txt/88
+	/Users/kuminin/Downloads/VCS-Project/Conflict/Jack/PT/H.txt/145
+3 Files	6 Bytes
+5-6-2016
+Parent file: MANIFEST_Jack_2016-05-06 23:09:15.835260.txt

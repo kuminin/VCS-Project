@@ -403,22 +403,34 @@ def copy_non_conflict_files(a_repo_path, map_repo_file, map_tree_file):
 
 # Copies the nonconflicting files from the repo files to our proejct tree.
 # Globals: None
-# A Line Count = 5
+# A Line Count = 10
 def copy_non_conflict_repo_files(a_repo_path, file):
     """Copies the nonconflicting files from the repo files to our proejct tree."""
 
     # Gets the path for the file that is inside the repo.
     file_path = get_path(a_repo_path, file)
 
+    # Create an empty array to hold path
+    a_temp_path = []
+
+
     # Sets an array from the file_path that was split by a "/"
     a_temp_repo_path = file_path.split("/")
 
-    # Pop the last two element in the temporary repo_path
-    a_temp_repo_path.pop()
-    a_temp_repo_path.pop()
+    # Check if there exists a sub folder.
+    if (len(a_temp_repo_path)-1) - a_temp_repo_path.index(g_NAME_OF_PT_PATH.split("/")[-1]) >= 3:
 
-    # finds the project tree owner and sets it to the temp path.
-    a_temp_path = find_project_tree_owner(a_temp_repo_path)
+        # pop the last three elements in the temp_repo_path
+        a_temp_repo_path.pop()
+        a_temp_path.append(a_temp_repo_path.pop())
+        a_temp_path.append(a_temp_repo_path.pop())
+    else:
+        # Pop the last two element in the temporary repo_path
+        a_temp_repo_path.pop()
+        a_temp_repo_path.pop()
+
+        # finds the project tree owner and sets it to the temp path.
+        a_temp_path = find_project_tree_owner(a_temp_repo_path)
 
     # Copies the non conflicting files to our project tree.
     copy_files(file_path, create_target_file_path(a_temp_path), "") #
@@ -434,8 +446,7 @@ def create_target_file_path(a_temp_path):
     target_path = g_NAME_OF_PT_PATH
 
     # Checks to see if the temp_path has a length greater than 3 for more directories.
-    while len(a_temp_path) >= 3:
-
+    if len(a_temp_path) >= 2:
         # appends to the target path for the sub directories.
         target_path = target_path + "/" + a_temp_path.pop()
 
@@ -564,10 +575,15 @@ def copy_files(repo_file_path, target_file_path, prefix):
 
     # creates an array of file path from our given repo file path
     a_file_path = repo_file_path.split("/")
-
+    print "a_file_path: ", a_file_path, "\n"
+    print
     # Sets the file path name to be the path of our given project tree with the file name appended
     file_path_name = append_file_name(find_project_tree_owner(a_file_path)) #
+    print "file_path_name: ", file_path_name, "\n"
+    print
 
+    print "target_file_path: ", target_file_path, "\n"
+    print
     # Checks if the prefix is empty
     if prefix == "":
 

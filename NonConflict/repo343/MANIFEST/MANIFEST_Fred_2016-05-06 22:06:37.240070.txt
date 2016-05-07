@@ -1,0 +1,5 @@
+Project Tree Structure: 
+	/Users/kuminin/Downloads/VCS-Project/NonConflict/Fred/PT/H.txt/728
+1 Files	15 Bytes
+5-6-2016
+Parent file: null
