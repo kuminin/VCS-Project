@@ -68,8 +68,8 @@ def copy_files(a_file_path):
     """Copies files to their respective project tree directory."""
 
     # loop for getting all the files in a map of lists.
-    for files in a_file_path:
-        for file in a_file_path[files]:
+    for files in a_file_path: # files ...
+        for file in a_file_path[files]: # file...
 
             # Path of project tree inside the repo.
             directory_path = g_NAME_OF_REPO_PATH + "/" + argv[0].split("/")[-1]
@@ -79,12 +79,12 @@ def copy_files(a_file_path):
                     directory_path += "/" + files.split("/")[x]
 
             # Calls copy_helper funciton to copy files
-            copy_helper(directory_path + "/" + file, check_sum(files + "/" + file))
+            copy_helper(directory_path + "/" + file, check_sum(files + "/" + file), files, file)
 
 # Copies files to their respective project tree directory.
 # Globals: None.
 # A line count = 4
-def copy_helper(directory_path, check_sum_name):
+def copy_helper(directory_path, check_sum_name, files, file):
     """Copies files to their respective project tree directory."""
 
     # Check if the file project tree directory exists.

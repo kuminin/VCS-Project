@@ -26,7 +26,7 @@ def check_out():
 
     user_input = type_input(a_manifest_files) # Gets user input.
 
-    # Checks for user input
+    # Validate user Input for the Manifest file
     while user_input < 1 or len(a_manifest_files) < user_input:
         user_input = type_input(a_manifest_files)
 
@@ -50,16 +50,16 @@ def copy_files(a_manifest_files, user_input):
     manifest_file = open(manifest_file_path, "r")
 
     # reads the manifes_file line by line and trim white spaces
-    for line in manifest_file:
+    for line in manifest_file: # Each line...
         a_file_lines.append(line.strip())
 
     manifest_file.close() # close the manifes file
 
     # copies the files from the project leaf tree into our target destination.
-    for num in range(1, len(a_file_lines) - 3):
+    for num in range(1, len(a_file_lines) - 3): # Each file...
         copy_helper(num, a_file_lines, manifest_file_path)
 
-# Copies files from the repo to our targe destination.
+# Copies files from the repo to our target destination.
 # Globals: g_NAME_OF_PT_PATH use for project tree path.
 # A Line Count = 9
 def copy_helper(num, a_file_lines, manifest_file_path):
@@ -113,8 +113,10 @@ def get_file(a_file_path, manifest_file_path):
     # set the project tree name index
     project_tree_name_index = a_file_path.index(manifest_file_path.split("_")[1]) + 1
 
-    # Appends to the temp_name_of_repo to create a file path
+    # project_tree_name_index ... length of a_file_path
     for num in range(project_tree_name_index, len(a_file_path)):
+
+        # Appends to the temp_name_of_repo to create a file path
         temp_name_of_repo = temp_name_of_repo + "/" + a_file_path[num]
 
     return temp_name_of_repo # return the temp_name_of_repo
@@ -134,8 +136,10 @@ def copy_manifest(manifest_file_path):
     # open the manifest file as read only.
     parent_manifest_file = open(manifest_file_path, "r")
 
-    # append the lines from the manifest file inside the array
-    for line in parent_manifest_file:
+
+    for line in parent_manifest_file: # line...
+
+        # append the lines from the manifest file inside the array
         a_manifest_file_lines.append(line)
 
     # Close the parent file.
@@ -156,8 +160,10 @@ def write_file(a_manifest_file_lines, child_manifest_path, manifest_file_path):
     # Create and open a file
     child_manifest_file = open(child_manifest_path, "w+")
 
-    # Write the contents from to the new manifest file from the child manifest.
+   # 0 ... length of a_manifest_file_lines - 1
     for index in range(len(a_manifest_file_lines)-1):
+
+        # Write the contents from to the new manifest file from the child manifest.
         child_manifest_file.write(a_manifest_file_lines[index])
 
     # Write the parent file for the new manifest file.
@@ -188,7 +194,7 @@ def type_input(a_manifest_files):
 
     return number # return the user input.
 
-# Gets the list of mainfest files.
+# Gets the list of mainfest files from the manifest folder in the Repo.
 # Globals: g_NAME_OF_MANIFEST_PATH to walk the directory for manifest path
 # Globals: g_DIRECTORY_AND_FILES_TO_IGNORE for removing ignoring files and directories.
 # A line count = 7
