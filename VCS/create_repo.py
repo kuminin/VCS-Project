@@ -3,9 +3,13 @@ import shutil
 from sys import argv
 from datetime import datetime
 
-g_NAME_OF_REPO = argv[1] + "/repo343" # Repo Directory Path.
-g_NAME_OF_MANIFEST_FOLDER = argv[1] + "/repo343/MANIFEST" # Manifest Directory Path.
+g_NAME_OF_REPO = argv[1] + "/repo343"  # Repo Directory Path.
 
+# Manifest Directory Path.
+g_NAME_OF_MANIFEST_FOLDER = argv[1] + "/repo343/MANIFEST"
+
+# A set of files and directories to ignore.
+g_DIRECTORY_AND_FILES_TO_IGNORE = set(['.DS_Store', "repo343"])
 
 # Creates a repo343 that stores all the files for the project tree.
 # Globals: parameter use for g_NAME_OF_REPO, g_NAME_OF_MANIFEST_FOLDER.
@@ -14,29 +18,30 @@ def initialize_repo():
     """Creates a repo343 that stores all the files for the project tree."""
     # checks if the g_NAME_OF_REPO path exist.
     if not os.path.exists(g_NAME_OF_REPO):
-        copy_tree() # calls copy_tree function
+        copy_tree()  # calls copy_tree function
 
         # checks if g_NAME_OF_MANIFEST_FOLDER path exist.
         if not os.path.exists(g_NAME_OF_MANIFEST_FOLDER):
-            os.makedirs(g_NAME_OF_MANIFEST_FOLDER) # Creates Manifest Directory
+            # Creates Manifest Directory
+            os.makedirs(g_NAME_OF_MANIFEST_FOLDER)
 
-        file_path = walk_tree() # Walks the initial repo343 Project Tree. Stores all the files at a given directory.
+        # Walks path of project tree
+        file_path = walk_tree(argv[0])
 
-        create_manifest(file_path) # Create Manifest file.
+        create_manifest(file_path)  # Create Manifest file.
 
-        create_leaf(file_path) # Creates leaf folders for files.
+        file_path = walk_tree(g_NAME_OF_REPO)  # Stores all the files at a given directory.
 
-        return True # Return True for Assert purpose
+        create_leaf(file_path)  # Creates leaf folders for files.
     else:
-        print g_NAME_OF_REPO + " Already Exists\n" # Print Debug
+        print g_NAME_OF_REPO + " Already Exists\n"  # Print Debug
 
-        return False # Return False for Assert purpose
 
-# Copies the project tree where backend.py is located.
+# Copies the project tree where create_repo.py is located.
 # Globals: parameter use for g_NAME_OF_REPO
 # ALine count = 2
 def copy_tree():
-    """Copies the project tree where backend.py is located."""
+    """Copies the project tree where create_repo.py is located."""
 
     # All the files to ignore when copying the Project Tree.
     FILES_TO_IGNORE = '.DS_Store'
@@ -44,39 +49,47 @@ def copy_tree():
     # Copies the project tree to the repo343 directory.
     shutil.copytree(argv[0], g_NAME_OF_REPO + "/" + argv[0].split("/")[-1], ignore = shutil.ignore_patterns(FILES_TO_IGNORE))
 
+
 # Walk through the initial repo343 directory.
 # Globals: parameter use for g_NAME_OF_REPO and g_NAME_OF_MANIFEST_FOLDER
-# ALine count = 8
-def walk_tree():
+# ALine count = 10
+def walk_tree(name_of_repo):
     """Walk through the initial repo343 directory."""
 
-    a_path_for_files = {} # Map to store list of files
+    a_path_for_files = {}  # Map to store list of files
 
     # Walks the repo343 directory.
-    for (dir_path, dir_names, file_names) in os.walk(g_NAME_OF_REPO):
+    for (a_dir_path, a_dir_names, a_file_names) in os.walk(name_of_repo):
+
+        # get rid of directories that are in the ignore set.
+        a_dir_names[:] = [d for d in a_dir_names if d not in g_DIRECTORY_AND_FILES_TO_IGNORE]
+
+        # get rid of files that are in the ignore set.
+        a_file_names[:] = [d for d in a_file_names if d not in g_DIRECTORY_AND_FILES_TO_IGNORE]
 
         # Check if the dir_path is not the Manifest Directory.
-        if dir_path != g_NAME_OF_MANIFEST_FOLDER:
+        if a_dir_path != g_NAME_OF_MANIFEST_FOLDER:
 
-            a_list_of_files = [] # Array to hold list of files.
+            a_list_of_files = []  # Array to hold list of files.
 
             # Walks to get all the files in a directory
-            for file_name in file_names:
-                a_list_of_files.append(file_name) # Appends file name to array
+            for file_name in a_file_names:
+                a_list_of_files.append(file_name)  # Appends file name to array
 
             # Map dir_path to list of files.
-            a_path_for_files[dir_path] = a_list_of_files
+            a_path_for_files[a_dir_path] = a_list_of_files
 
-    return a_path_for_files # return Map of directory and files.
+    return a_path_for_files  # return Map of directory and files.
+
 
 # Creates the manifest file for the repo343 directory.
 # Globals: g_NAME_OF_MANIFEST_FOLDER use for file path.
-# ALine count = 5
+# ALine count = 7
 def create_manifest(directory_list):
     """Creates the manifest file for the repo343 directory."""
 
     # Manifest File Name
-    manifest_name = "MANIFEST_" + str(datetime.now()) + ".txt"
+    manifest_name = "MANIFEST_" + argv[0].split("/")[-2] + "_" + str(datetime.now()) + ".txt"
 
     # Sets the file name of MANIFEST to the current datetime.
     MANIFEST = g_NAME_OF_MANIFEST_FOLDER + "/" + manifest_name
@@ -96,13 +109,14 @@ def create_manifest(directory_list):
     # Copy manifest file to the Project Tree Folder
     shutil.copyfile(MANIFEST, get_directory() + manifest_name)
 
+
 # Write the project tree to the manifest file.
 # Globals: None.
 # ALine count = 7
 def write_hierarchy(manifest_file, directory_list):
     """Writes the project hierarchy to the manifest file."""
 
-    file_byte = 0L # Variable to get total byte size of files.
+    file_byte = 0L  # Variable to get total byte size of files.
 
     # Write to file and get the path for all the files.
     a_file_listing = write_file(manifest_file, directory_list)
@@ -115,27 +129,28 @@ def write_hierarchy(manifest_file, directory_list):
     manifest_file.write(str(len(a_file_listing)) + " Files\t" + str(file_byte) + " Bytes" + "\n")
 
     # sets the current_date to todays month/day/year respectively.
-    current_date = str(datetime.now().month) + "/" + str(datetime.now().day) + "/" + str(datetime.now().year)
+    current_date = str(datetime.now().month) + "-" + str(datetime.now().day) + "-" + str(datetime.now().year)
 
     # Write the current date to the file.
     manifest_file.write(current_date)
 
+
 # Helper function for write_hierarchy.
-# Globals: None.
-# ALine count = 9
+# Globals: g_NAME_OF_MANIFEST_FOLDER to check against directory
+# Globals: g_NAME_OF_REPO to check against directory
+# ALine count = 8
 def write_file(manifest_file, directory_list):
     """Helper function for write_hierarchy."""
 
-    a_file_listing = [] # Array to hold all file path.
+    a_file_listing = []  # Array to hold all file path.
 
-    manifest_file.write("Project Tree Structure: \n") # Write string to file
+    manifest_file.write("Project Tree Structure: \n")  # Write string to file
 
     # loop through the directory in the list of directories
     for directory in directory_list:
 
         # Write the directory path in file except for the mainfest file.
         if directory != g_NAME_OF_MANIFEST_FOLDER and directory != g_NAME_OF_REPO:
-            # manifest_file.write("\t" + directory + "\n")
 
             # loop through the file in the list of files
             for files in directory_list[directory]:
@@ -145,15 +160,15 @@ def write_file(manifest_file, directory_list):
 
                 # write the path for the file and its checksum
                 manifest_file.write("\t" + directory + "/" + files + "/" + check_sum(directory + "/" + files) + "\n")
-    return a_file_listing # return list of file paths.
+
+    return a_file_listing  # return list of file paths.
 
 
 # Creates the leaf directory folder for the files.
 # Globals: None.
 # ALine count = 8
 def create_leaf(directory_list):
-    """Creates the leaf directory folder for the files.
-    """
+    """Creates the leaf directory folder for the files."""
 
     # loop through the directory in the list of directories
     for directory in directory_list:
@@ -161,7 +176,7 @@ def create_leaf(directory_list):
         # loop through the file in the list of files
         for files in directory_list[directory]:
 
-            file_path = directory + "/" # set the file path
+            file_path = directory + "/"  # set the file path
 
             # get check sum name for the files
             check_sum_name = check_sum(file_path + files)
@@ -171,10 +186,11 @@ def create_leaf(directory_list):
 
             # check if a directory exist to files (Leaf folder)
             if not os.path.exists(file_path + files):
-                os.makedirs(file_path + files) # Create Leaf Folder
+                os.makedirs(file_path + files)  # Create Leaf Folder
 
             # move the file to the leaf folder.
             shutil.move(file_path + check_sum_name, file_path + files + "/" + check_sum_name)
+
 
 # Gets the check_sum for the file.
 # Globals: None.
@@ -182,23 +198,31 @@ def create_leaf(directory_list):
 def check_sum(file_name):
     """Gets the check_sum for the file."""
 
-    file = open(file_name, 'r') # open file name.
+    file = open(file_name, 'r')  # open file name.
 
-    check_sum = 0 # set check sum variable to 0.
+    check_sum = 0  # set check sum variable to 0.
 
-    for line in file: # get every line for the file.
-        for char in line: # get every char in line.
-            check_sum += ord(char) # add the char to the check_sum.
+    for line in file:  # get every line for the file.
+        for char in line:  # get every char in line.
+            check_sum += ord(char)  # add the char to the check_sum.
 
-    file.close() # close the file.
+    file.close()  # close the file.
 
-    return str(check_sum) # return string representation of check_sum.
+    return str(check_sum)  # return string representation of check_sum.
 
+# Gets the directory for where the PT directory is located.
+# Globals: None.
+# A Line Count = 4
 def get_directory():
-    src = ""
-    for x in range (len(argv[0].split("/")) - 1):
-        src += argv[0].split("/")[x] + "/"
-    return src
+    """Gets the directory for where the PT directory is located."""
+
+    src = "" # initial src location for the directory path
+
+    # create the directory path for where the PT directory is located
+    for index in range(len(argv[0].split("/")) - 1):
+        src += argv[0].split("/")[index] + "/"
+
+    return src # return the directory path
 
 # Check if the script is ran independently.
 if __name__ == "__main__":

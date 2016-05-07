@@ -1,0 +1,6 @@
+Project Tree Structure: 
+	/Users/kuminin/Downloads/VCS-Project/NonConflict/Jack/PT/FA/Hello.txt/2889
+	/Users/kuminin/Downloads/VCS-Project/NonConflict/Jack/PT/H.txt/3414
+2 Files	85 Bytes
+5-6-2016
+Parent file: MANIFEST_Jack_2016-05-06 22:21:01.330969.txt

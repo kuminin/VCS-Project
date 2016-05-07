@@ -1,0 +1,7 @@
+Project Tree Structure: 
+	/Users/kuminin/Downloads/VCS-Project/Conflict/Fred/PT/H.txt/72
+	/Users/kuminin/Downloads/VCS-Project/Conflict/Fred/PT/FA/c.txt/67
+	/Users/kuminin/Downloads/VCS-Project/Conflict/Fred/PT/FA/x.txt/88
+3 Files	3 Bytes
+5-6-2016
+Parent file: MANIFEST_Fred_2016-05-06 23:02:39.665257.txt
